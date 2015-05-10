@@ -1,17 +1,19 @@
 (defn is-conn [edges]
   (let [ all-nodes (set (flatten (seq edges)))]
     (loop [ visited #{}
-            to-visit #{(ffirst edges)} ]
+            to-visit [(ffirst edges)] ]
       (if (empty? to-visit)
         (= visited all-nodes)
-        (let [ [cur & toseq] (seq to-visit)
+        (let [ [cur & to-visit] to-visit
                visited (conj visited cur)]
           (recur visited
-                 (into (set toseq)
-                       (filter (comp not visited)
-                               (for [[a,b] edges
-                                     :when (or (= cur a) (= cur b)) ]
-                                 (if (= cur a) b a))))))))))
+                 (concat
+                   to-visit
+                   (distinct
+                   (filter (comp not visited)
+                           (for [[a,b] edges
+                                 :when (or (= cur a) (= cur b)) ]
+                             (if (= cur a) b a)))))))))))
 
 (= true (is-conn #{[:a :a]}))
 
