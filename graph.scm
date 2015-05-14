@@ -1,23 +1,23 @@
-(define (assert msg s)
-  (if (not s) (display msg)))
-
-(assert "foo" (= 1 1))
-(assert "blat\n" (= 1 2))
-
-(define (remove item list)
-  (if (= item (car list))
-    (cdr list)
-    (cons (car list) (remove item (cdr list)))))
-
-(assert "remove1\n" (equal? (remove 7 '(1 3 5 7 9)) '(1 3 5 9)))
 
 (define (graph-tour gr)
-  (if (null? gr)
-      true
-        (let* ((p (car gr))
-              (a (car p))
-              (b (cdr p)))
-          p)))
+  ;(display gr) (newline)
+  (if (null? (cdr gr)) #t
+    (let ((e1 (car gr)))
+      (let loop ((g (cdr gr)) (seen '()))
+        (if (null? g) #f
+          (let ((e2 (car g)))
+            (cond
+              ((equal? (cdr e1) (car e2))
+               (graph-tour (cons e2 (append seen (cdr g)))))
+              ((equal? (cdr e1) (cdr e2))
+               (graph-tour (cons (cons (cdr e2) (car e2)) (append seen (cdr g)))))
+              (else (loop (cdr g) (cons e2 seen))))))))))
 
-(display (graph-tour '(('a . 'b) ('c . 'd))))
+
+(display "true ") (display (graph-tour '((a . b) (c . b)))) (newline)
+(display "false ") (display (graph-tour '((a . b) (c . x)))) (newline)
+
+(display "true ")
+(display (graph-tour '((a . b) (a . c) (c . b) (a . e) (b . e) (a . d) (b . d) (c . e) (d . e) (c . f) (d . f))))
+(newline)
 
