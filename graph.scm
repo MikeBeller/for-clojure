@@ -7,14 +7,22 @@
             (loop (cdr l) (cons i r))
             (loop (cdr l) r)))))))
 
-(define (even x) (= 0 (modulo x 2)))
-;(display (filter even '(1 2 3 4 5 6)))
+;(define (even? x) (= 0 (modulo x 2)))
+;(display (filter even? '(1 2 3 4 5 6)))
 
 (define (remove i lst)
   (filter (lambda (x) (not (eq? x i))) lst))
 
-(define (any? lst)
-  (foldr (lambda (a b) (or a b)) #f lst))
+(define (boolean x) (not (not x)))
+
+(define (any? pred lst)
+  (boolean (some pred lst)))
+
+(define (some pred lst)
+  (if (null? lst) #f
+    (if (pred (car lst))
+      (car lst)
+      (some pred (cdr lst)))))
 
 (define (graph-tour gr)
   (let ((i (car gr)))
@@ -22,7 +30,7 @@
 
 (define (g-t e1 gr)
   (if (null? gr) #t
-    (any?
+    (any? boolean
       (map
         (lambda (e2)
           (cond
