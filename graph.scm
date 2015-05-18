@@ -1,3 +1,14 @@
+(define-macro (test form)
+  `(begin 
+     (display "TEST ")
+     (if ,form
+       (display "OK: ")
+       (display "FAIL: "))
+     (display (quote ,form))(display ": ")
+     (newline)))
+
+(test (= (log 1) 0))
+
 (define (filter pred lst)
   (reverse
     (let loop ((l lst) (r '()))
@@ -7,11 +18,12 @@
             (loop (cdr l) (cons i r))
             (loop (cdr l) r)))))))
 
-;(define (even? x) (= 0 (modulo x 2)))
-;(display (filter even? '(1 2 3 4 5 6)))
+(define (even? x) (= 0 (modulo x 2)))
+(test (equal? (filter even? '(1 2 3 4 5 6)) '(2 4 6)))
 
 (define (remove i lst)
-  (filter (lambda (x) (not (eq? x i))) lst))
+  (filter (lambda (x) (not (eqv? x i))) lst))
+(test (equal? (remove 2 '(1 2 3)) '(1 3)))
 
 (define (boolean x) (not (not x)))
 
@@ -42,14 +54,14 @@
         gr))))
 
 
-(display "true ") (display (graph-tour '((a . b) (c . b)))) (newline)
-(display "false ") (display (graph-tour '((a . b) (c . x)))) (newline)
+(test (graph-tour '((a . b) (c . b))))
+(test (not (graph-tour '((a . b) (c . x)))))
 
-(display "true ")
-(display (graph-tour '((a . b) (a . c) (c . b) (a . e) (b . e) (a . d) (b . d) (c . e) (d . e) (c . f) (d . f))))
-(newline)
+(test 
+  (graph-tour
+    '((a . b) (a . c) (c . b) (a . e) (b . e) (a . d) (b . d) (c . e) (d . e) (c . f) (d . f))))
 
-(display "false ")
-(display (graph-tour
-           '((a . b) (b . c) (c . d) (x . y) (d . a) (b . e))))
-(newline)
+(test
+  (not
+    (graph-tour
+           '((a . b) (b . c) (c . d) (x . y) (d . a) (b . e)))))
