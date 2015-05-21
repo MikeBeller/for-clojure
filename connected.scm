@@ -23,19 +23,21 @@
            (loop (remove e es) (cons e seen))
            #f)))))
 
-; need to still write 'normalize' - change graph from list of edges
-;  to a assoc with car equal node name, cdr equal list of connected nodes
-; need to write set-extend, which adds items in second arg to list in
-;  first arg, only for items not already in the list
-;(define graphcon (edges)
-;  (let ((gr (normalize edges)))
-;    (let loop ((todo (list (caar gr))) (tosee (map car gr)))
-;      (if (null? todo) (null? tosee)
-;        (let ((node (car todo)))
-;          ; if node still to be seen, add its connected nodes to "todo"
-;          (if (member node tosee)
-;            (loop ((set-extend todo (cdr node)) (remove (car node) tosee)))))))))
+(define (assoc-in crap))
 
+(define (normalize edges)
+  (let loop ((gr '()) (es edges))
+    (if (null? es)
+      gr
+      (loop (assoc-in (car es) (cdr es) gr) (cdr es)))))
+
+(define (graphcon edges)
+  (let ((gr (normalize edges)))
+    (let loop ((todo (list (caar gr))) (tosee (map car gr)))
+      (if (null? todo) (null? tosee)
+        (let ((node (car todo)))
+          (if (member node tosee)
+            (loop ((union todo (cdr node)) (remove (car node) tosee)))))))))
 
 (test (gr-connected '((a . a))))
 (test (gr-connected '((a . b))))

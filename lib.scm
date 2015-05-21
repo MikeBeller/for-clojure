@@ -36,3 +36,13 @@
       (car lst)
       (some pred (cdr lst)))))
 
+(define (union s1 s2)
+  (foldr
+    (lambda (s i)
+      (if (member i s)
+        s
+        (cons i s)))
+    s1
+    s2))
+;(test (equal? (union '(1 2 3) '(2 4)) '(4 1 2 3)))
+
